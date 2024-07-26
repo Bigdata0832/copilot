@@ -1,5 +1,5 @@
 from src.data.load_data import keypo_textlist
-from src.data.process_data import preprocess_texts
+from src.data.preprocess import preprocess_texts
 
 def main():
     text_list = keypo_textlist()

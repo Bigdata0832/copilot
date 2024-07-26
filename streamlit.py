@@ -1,5 +1,5 @@
 import streamlit as st
-from src.utils.assistant import create_thread, delete_thread, create_messages_to_thread, run_assistant, get_chat_history
+from utils.llm.assistant import create_thread, delete_thread, create_messages_to_thread, run_assistant, get_chat_history
 
 def main():
     st.title("KEYPO Copilot")
