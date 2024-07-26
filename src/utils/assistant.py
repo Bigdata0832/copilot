@@ -7,11 +7,11 @@ from openai import OpenAI
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-def hello(name):
-    return f"Hello {name}!"
 
 # Adjust
-def create_assistant(name, description=None, instructions=None, temperature=1, model="gpt-4o"):
+def create_assistant(
+    name, description=None, instructions=None, temperature=1, model="gpt-4o"
+):
     """Create an assistant
 
     Args:
@@ -37,16 +37,34 @@ def create_assistant(name, description=None, instructions=None, temperature=1, m
     )
     return assistant
 
+
 def list_assistant():
+    """
+    Retrieves a list of assistants from the OpenAI API.
+
+    Returns:
+        list: A list of assistant objects representing the assistants.
+    """
     my_assistants = client.beta.assistants.list(
         order="desc",
         limit="20",
     )
     return my_assistants.data
 
+
 def retrive_assistant(assistant_id):
+    """
+    Retrieve an assistant by its ID.
+
+    Args:
+        assistant_id (str): The ID of the assistant to retrieve.
+
+    Returns:
+        dict: The assistant object representing the assistant with the given ID.
+    """
     assistant = client.beta.assistants.retrieve(assistant_id)
     return assistant
+
 
 def delete_assistant(assistant_id):
     response = client.beta.assistants.delete(assistant_id)
@@ -55,24 +73,74 @@ def delete_assistant(assistant_id):
 
 # Operate
 def create_thread(messages=None):
-    """Create a thread to chat
-    messages = [{"role": "user","content": "推薦幾個AI技術給我"},...]
+    """
+    Create a thread to chat.
+
+    Args:
+        messages (list, optional): A list of dictionaries representing the messages in the thread.
+        Each dictionary should have the keys 'role' and 'content'. Defaults to None.
+        messages = [{"role": "user","content": "推薦幾個AI技術給我"},...]
+
+    Returns:
+        dict: The created thread.
     """
     thread = client.beta.threads.create(messages=messages)
     return thread
 
+
 def delete_thread(thread_id):
+    """
+    Deletes a thread with the given thread ID.
+
+    Parameters:
+        thread_id (str): The ID of the thread to be deleted.
+
+    Returns:
+        None
+    """
     response = client.beta.threads.delete(thread_id)
     print(response)
 
+
 def create_messages_to_thread(thread_id, role, content):
+    """
+    Create a message in a thread with the given thread ID, role, and content.
+
+    Args:
+        thread_id (str): The ID of the thread to create the message in.
+        role (str): The role of the message sender.
+        content (str): The content of the message.
+
+    Returns:
+        None
+    """
     _ = client.beta.threads.messages.create(
-        thread_id=thread_id,
-        role=role,
-        content=content
+        thread_id=thread_id, role=role, content=content
     )
 
-def run_assistant(thread_id, assistant_id, instructions=None, max_completion_tokens=None, max_prompt_tokens=None, tools=None):
+
+def run_assistant(
+    thread_id,
+    assistant_id,
+    instructions=None,
+    max_completion_tokens=None,
+    max_prompt_tokens=None,
+    tools=None,
+):
+    """
+    Runs an assistant in a thread with the given thread ID, assistant ID, and optional parameters.
+
+    Args:
+        thread_id (str): The ID of the thread to run the assistant in.
+        assistant_id (str): The ID of the assistant to run.
+        instructions (str, optional): Additional instructions for the assistant. Defaults to None.
+        max_completion_tokens (int, optional): The maximum number of tokens the assistant can generate. Defaults to None.
+        max_prompt_tokens (int, optional): The maximum number of tokens the assistant can consume. Defaults to None.
+        tools (list, optional): A list of tools to use for the assistant. Defaults to None.
+
+    Returns:
+        openai.api_resources.beta.threads.runs.Run: The run object representing the assistant's execution.
+    """
     run = client.beta.threads.runs.create_and_poll(
         thread_id=thread_id,
         assistant_id=assistant_id,
@@ -83,11 +151,21 @@ def run_assistant(thread_id, assistant_id, instructions=None, max_completion_tok
     )
     return run
 
+
 def get_chat_history(run, thread_id):
-    if run.status == 'completed': 
-        messages = client.beta.threads.messages.list(
-            thread_id=thread_id
-        )
+    """
+    Retrieves the chat history from a completed run.
+
+    Args:
+        run (openai.api_resources.beta.threads.runs.Run): The run object representing the completed assistant execution.
+        thread_id (str): The ID of the thread to retrieve the chat history from.
+
+    Returns:
+        list: A list of strings representing the chat history. Each string is in the format "role: text_content".
+        If the run is not completed, an empty list is returned.
+    """
+    if run.status == "completed":
+        messages = client.beta.threads.messages.list(thread_id=thread_id)
         data = messages.data
         chat_history = []
         for message in data:
@@ -100,9 +178,14 @@ def get_chat_history(run, thread_id):
         print(run.status)
         return []
 
+
 if __name__ == "__main__":
     # Create
-    # assistant = create_assistant(name="KEYPO Copilot", description="你是個做輿情分析的專家，協助使用者進行輿情分析", instructions="除了輿情分析的話題，其他都拒絕回答")
+    # assistant = create_assistant(
+    #     name="KEYPO Copilot",
+    #     description="你是個做輿情分析的專家，協助使用者進行輿情分析",
+    #     instructions="除了輿情分析的話題，其他都拒絕回答"
+    # )
     # print(assistant)
     # thread = create_thread()
     # print(thread)

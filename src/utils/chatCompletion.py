@@ -1,22 +1,28 @@
 """
 openai==1.30.3
 """
-
+import os
+from dotenv import load_dotenv
 from openai import OpenAI
 
-client = OpenAI(api_key="sk-proj-RBgey2y5NjBlbYSH5mZbT3BlbkFJ36omKDnuBoGYFniuKD6W")
+# Settings
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 def stream_mode():
     completion = client.chat.completions.create(
         model="gpt-4o",
         messages=[
             {"role": "system", "content": "你是一個AI助手"},
-            {"role": "user", "content": "哈囉"}
+            {"role": "user", "content": "哈囉"},
         ],
-        stream=True
+        stream=True,
     )
 
     for chunk in completion:
-        print(chunk.choices[0].delta.content,end="")
+        print(chunk.choices[0].delta.content, end="")
 
-stream_mode()
+
+if __name__ == "__main__":
+    stream_mode()
