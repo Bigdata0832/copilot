@@ -177,27 +177,3 @@ def get_chat_history(run, thread_id):
     else:
         print(run.status)
         return []
-
-
-if __name__ == "__main__":
-    # Create
-    # assistant = create_assistant(
-    #     name="KEYPO Copilot",
-    #     description="你是個做輿情分析的專家，協助使用者進行輿情分析",
-    #     instructions="除了輿情分析的話題，其他都拒絕回答"
-    # )
-    # print(assistant)
-    # thread = create_thread()
-    # print(thread)
-
-    # Operate
-    # assistants = list_assistant()
-    assistant_id = "asst_Q0aogQUlR5PkLuBB6Hmh6mk5"
-    thread_id = "thread_3BlDvnPAXyUEVto9TWhHwqJr"
-
-    # Do
-    create_messages_to_thread(thread_id=thread_id, role="user", content="告訴我為何天氣如此棒")
-    run = run_assistant(thread_id=thread_id, assistant_id=assistant_id)
-    print(run)
-    chat_history = get_chat_history(run=run, thread_id=thread_id)
-    print(chat_history)
