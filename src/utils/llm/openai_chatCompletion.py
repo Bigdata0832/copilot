@@ -1,7 +1,3 @@
-"""
-openai==1.30.3
-"""
-
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -9,18 +5,37 @@ from openai import OpenAI
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-def stream_mode():
+
+def chat_completion(system_prompt, user_prompt, model="gpt-4o-mini", temperature=0):
+    """
+    Generates a chat completion using the OpenAI Chat API.
+
+    Args:
+        system_prompt (str): The prompt for the system message.
+        user_prompt (str): The prompt for the user message.
+        model (str, optional): The name of the model to use for completion. Defaults to "gpt-4o-mini".
+        temperature (float, optional): The temperature value for generating the completion. Defaults to 0.
+
+    Returns:
+        dict: The completion response from the Chat API.
+    """
     completion = client.chat.completions.create(
-        model="gpt-4o",
+        model=model,
         messages=[
-            {"role": "system", "content": "你是一個AI助手"},
-            {"role": "user", "content": "哈囉"}
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
         ],
-        stream=True
+        temperature=temperature,
     )
 
-    for chunk in completion:
-        print(chunk.choices[0].delta.content,end="")
+    return completion.choices[0].message.content
+
 
 if __name__ == "__main__":
-    stream_mode()
+    resp = chat_completion(
+        system_prompt="你只會說不要吵，無論使用者問什麼",
+        user_prompt="你是誰",
+        model="gpt-4o",
+        temperature=0.8,
+    )
+    print(resp)
