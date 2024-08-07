@@ -1,2 +1,2 @@
-from .prompt_template import PromptTemplate
-from .prompt_manager import PromptManager
+from .prompt_data import PROMPTS
+from .prompt_util import get_prompt, list_prompts
