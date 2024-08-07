@@ -6,29 +6,26 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def chat_completion(system_prompt, user_prompt, model="gpt-4o-mini", temperature=0):
+def chat_completion(messages, model="gpt-4o-mini", temperature=0):
     """
     Generates a chat completion using the OpenAI Chat API.
 
     Args:
-        system_prompt (str): The prompt for the system message.
-        user_prompt (str): The prompt for the user message.
+        messages (list): The input prompt try to generate completions.
         model (str, optional): The name of the model to use for completion. Defaults to "gpt-4o-mini".
         temperature (float, optional): The temperature value for generating the completion. Defaults to 0.
 
     Returns:
         dict: The completion response from the Chat API.
     """
-    completion = client.chat.completions.create(
+    response = client.chat.completions.create(
         model=model,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
+        messages=messages,
         temperature=temperature,
     )
+    print(f"Prompt:{response.usage.prompt_tokens}, Completion:{response.usage.completion_tokens}")
 
-    return completion.choices[0].message.content
+    return response.choices[0].message.content
 
 
 if __name__ == "__main__":
